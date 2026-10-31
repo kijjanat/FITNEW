@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Workout Tracker</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            app: {
+              bg: '#F2F2F7',
+              card: '#FFFFFF',
+              border: '#E5E5EA',
+              text: '#1C1C1E',
+              subtext: '#8E8E93',
+              accent: '#007AFF',
+              accentHover: '#0062CC',
+              secondaryBtn: '#E5E5EA'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+    }
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      background-color: #F2F2F7;
+      color: #1C1C1E;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    }
+    .safe-pt { padding-top: calc(var(--sat) + 0.5rem); }
+    .safe-pb { padding-bottom: calc(var(--sab) + 0.75rem); }
+    .touch-target { min-height: 50px; }
+    .tap-scale:active { transform: scale(0.985); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .num-tabular { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="bg-[#F2F2F7] text-[#1C1C1E] flex flex-col justify-center items-center antialiased">
+  <div id="app" class="w-full max-w-md h-full flex flex-col justify-between px-5 safe-pt safe-pb relative overflow-hidden">
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: HOME SELECTION SCREEN                  -->
+    <!-- ============================================== -->
+    <div id="view-home" class="flex flex-col flex-1 h-full overflow-hidden">
+      <header class="pt-3 pb-4">
+        <h1 class="text-[32px] font-bold tracking-tight text-[#1C1C1E]">Workout</h1>
+        <p class="text-sm text-[#8E8E93] mt-0.5 font-normal">เลือกโปรแกรมสำหรับฝึกซ้อมวันนี้</p>
+      </header>
+
+      <!-- Routine Cards List -->
+      <div class="flex-1 overflow-y-auto no-scrollbar space-y-3 py-1">
+        
+        <!-- Upper A Card -->
+        <div class="w-full bg-white border border-[#E5E5EA] rounded-2xl p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <div onclick="startWorkout('upperA')" class="flex-1 cursor-pointer tap-scale">
+              <h2 class="text-xl font-semibold text-[#1C1C1E] tracking-tight">Upper A</h2>
+              <p class="text-xs text-[#8E8E93] mt-1 font-medium">Chest · Back · Arms</p>
+            </div>
+            <button onclick="openRoutinePreview('upperA')" class="p-2 -mr-2 -mt-1 text-[#007AFF] bg-[#F2F2F7] rounded-xl active:bg-[#E5E5EA] tap-scale flex items-center gap-1" title="ดูรายการท่า">
+              <svg class="w-4 h-4 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+              <span class="text-xs font-medium">ดูท่า</span>
+            </button>
+          </div>
+          <div onclick="startWorkout('upperA')" class="mt-3 pt-2.5 border-t border-[#F2F2F7] text-xs text-[#8E8E93] flex justify-between items-center cursor-pointer">
+            <span>6 exercises · 18 sets</span>
+            <span class="text-[#007AFF] font-medium flex items-center">เริ่มซ้อม <svg class="w-3.5 h-3.5 ml-0.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+
+        <!-- Lower A Card -->
+        <div class="w-full bg-white border border-[#E5E5EA] rounded-2xl p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <div onclick="startWorkout('lowerA')" class="flex-1 cursor-pointer tap-scale">
+              <h2 class="text-xl font-semibold text-[#1C1C1E] tracking-tight">Lower A</h2>
+              <p class="text-xs text-[#8E8E93] mt-1 font-medium">Quads · Hamstrings · Calves</p>
+            </div>
+            <button onclick="openRoutinePreview('lowerA')" class="p-2 -mr-2 -mt-1 text-[#007AFF] bg-[#F2F2F7] rounded-xl active:bg-[#E5E5EA] tap-scale flex items-center gap-1" title="ดูรายการท่า">
+              <svg class="w-4 h-4 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+              <span class="text-xs font-medium">ดูท่า</span>
+            </button>
+          </div>
+          <div onclick="startWorkout('lowerA')" class="mt-3 pt-2.5 border-t border-[#F2F2F7] text-xs text-[#8E8E93] flex justify-between items-center cursor-pointer">
+            <span>5 exercises · 14 sets</span>
+            <span class="text-[#007AFF] font-medium flex items-center">เริ่มซ้อม <svg class="w-3.5 h-3.5 ml-0.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+
+        <!-- Upper B Card -->
+        <div class="w-full bg-white border border-[#E5E5EA] rounded-2xl p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <div onclick="startWorkout('upperB')" class="flex-1 cursor-pointer tap-scale">
+              <h2 class="text-xl font-semibold text-[#1C1C1E] tracking-tight">Upper B</h2>
+              <p class="text-xs text-[#8E8E93] mt-1 font-medium">Incline · Upper Back · Arms</p>
+            </div>
+            <button onclick="openRoutinePreview('upperB')" class="p-2 -mr-2 -mt-1 text-[#007AFF] bg-[#F2F2F7] rounded-xl active:bg-[#E5E5EA] tap-scale flex items-center gap-1" title="ดูรายการท่า">
+              <svg class="w-4 h-4 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+              <span class="text-xs font-medium">ดูท่า</span>
+            </button>
+          </div>
+          <div onclick="startWorkout('upperB')" class="mt-3 pt-2.5 border-t border-[#F2F2F7] text-xs text-[#8E8E93] flex justify-between items-center cursor-pointer">
+            <span>6 exercises · 17 sets</span>
+            <span class="text-[#007AFF] font-medium flex items-center">เริ่มซ้อม <svg class="w-3.5 h-3.5 ml-0.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+
+        <!-- Lower B Card -->
+        <div class="w-full bg-white border border-[#E5E5EA] rounded-2xl p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <div onclick="startWorkout('lowerB')" class="flex-1 cursor-pointer tap-scale">
+              <h2 class="text-xl font-semibold text-[#1C1C1E] tracking-tight">Lower B</h2>
+              <p class="text-xs text-[#8E8E93] mt-1 font-medium">Glutes · Quads · Hips</p>
+            </div>
+            <button onclick="openRoutinePreview('lowerB')" class="p-2 -mr-2 -mt-1 text-[#007AFF] bg-[#F2F2F7] rounded-xl active:bg-[#E5E5EA] tap-scale flex items-center gap-1" title="ดูรายการท่า">
+              <svg class="w-4 h-4 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+              <span class="text-xs font-medium">ดูท่า</span>
+            </button>
+          </div>
+          <div onclick="startWorkout('lowerB')" class="mt-3 pt-2.5 border-t border-[#F2F2F7] text-xs text-[#8E8E93] flex justify-between items-center cursor-pointer">
+            <span>6 exercises · 17 sets</span>
+            <span class="text-[#007AFF] font-medium flex items-center">เริ่มซ้อม <svg class="w-3.5 h-3.5 ml-0.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: ACTIVE WORKOUT & REST VIEW             -->
+    <!-- ============================================== -->
+    <div id="view-workout" class="hidden flex flex-col flex-1 h-full justify-between">
+      
+      <!-- Top Bar: Progress & Back -->
+      <div>
+        <div class="flex items-center justify-between py-2 border-b border-[#E5E5EA]">
+          <button onclick="promptExitWorkout()" class="text-[#007AFF] text-sm font-normal flex items-center -ml-1 py-1 px-1 rounded active:opacity-60 transition-opacity">
+            <svg class="w-4 h-4 mr-0.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            <span>Workout</span>
+          </button>
+          <span id="workoutRoutineBadge" class="font-semibold text-sm text-[#1C1C1E]">Upper A</span>
+          <div class="flex items-center gap-2">
+            <span id="exerciseCounterBadge" class="text-xs text-[#8E8E93] font-normal num-tabular">1 of 6</span>
+            <button id="soundToggleBtn" onclick="toggleSound()" class="text-[11px] font-medium text-[#1C1C1E] bg-[#F2F2F7] border border-[#E5E5EA] px-2 py-0.5 rounded-full tap-scale active:bg-[#E5E5EA] flex items-center gap-1 select-none">
+              <span id="soundToggleIcon">🔊</span>
+              <span id="soundToggleLabel">Sound</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Linear Progress Bar -->
+        <div class="w-full bg-[#E5E5EA] rounded-full h-1 mt-2.5 overflow-hidden">
+          <div id="workoutProgressBar" class="bg-[#007AFF] h-full rounded-full transition-all duration-300" style="width: 15%;"></div>
+        </div>
+
+        <!-- Exercise Focus Card -->
+        <div class="bg-white border border-[#E5E5EA] rounded-2xl p-3 sm:p-4 text-center mt-3 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col items-center">
+          
+          <div class="relative w-full aspect-[16/10] bg-[#F2F2F7] rounded-xl overflow-hidden border border-[#E5E5EA] flex items-center justify-center mb-2.5">
+            <div id="imgPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-[#8E8E93] bg-[#F2F2F7]">
+              <svg class="w-6 h-6 opacity-40 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <span class="text-[11px] text-[#8E8E93] font-medium">กำลังโหลด...</span>
+            </div>
+            <img 
+              id="exerciseImg" 
+              src="" 
+              alt="Exercise Form" 
+              class="w-full h-full object-cover relative z-10 opacity-0 transition-opacity duration-200"
+              onload="this.style.opacity='1'; document.getElementById('imgPlaceholder').style.display='none';"
+              onerror="this.style.opacity='0'; document.getElementById('imgPlaceholder').style.display='flex'; document.getElementById('imgPlaceholder').innerHTML='<span class=\'text-xs text-[#8E8E93]\'>ภาพประกอบท่าฝึก</span>';"
+            />
+          </div>
+
+          <h2 id="exerciseNameLabel" class="text-lg sm:text-xl font-bold text-[#1C1C1E] mt-0.5 leading-snug line-clamp-2">
+            DB Flat Bench Press
+          </h2>
+
+          <div class="mt-1 flex flex-wrap items-center justify-center gap-2 text-xs">
+            <div class="text-[#8E8E93]">
+              Target: <span id="exerciseSchemeLabel" class="font-medium text-[#1C1C1E]">3 × 6–10</span>
+            </div>
+            <!-- Last Session Performance Badge -->
+            <div id="lastRecordBadge" class="hidden text-[11px] font-medium text-[#007AFF] bg-[#007AFF]/10 border border-[#007AFF]/20 px-2 py-0.5 rounded-full num-tabular">
+              ครั้งก่อน: -
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Display: Active Set or Rest Timer -->
+      <div class="my-auto py-2 flex flex-col items-center justify-center text-center">
+        
+        <!-- Status A: Active Set Mode -->
+        <div id="statusSetActive" class="flex flex-col items-center">
+          <p class="text-xs font-medium text-[#8E8E93] uppercase tracking-wider">Set</p>
+          <div class="mt-0.5 text-5xl sm:text-6xl font-semibold num-tabular tracking-tight text-[#1C1C1E] flex items-baseline gap-2">
+            <span id="currentSetNum" class="text-[#007AFF]">1</span>
+            <span class="text-2xl sm:text-3xl text-[#C7C7CC] font-normal">/</span>
+            <span id="totalSetNum" class="text-2xl sm:text-3xl text-[#8E8E93] font-normal">3</span>
+          </div>
+          <div id="setDotsRow" class="flex space-x-2 mt-3.5"></div>
+        </div>
+
+        <!-- Status B: Rest Timer Mode -->
+        <div id="statusTimerActive" class="hidden flex flex-col items-center w-full">
+          <span id="restStatusBadge" class="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider mb-1">
+            Rest
+          </span>
+
+          <div id="restTimerDisplay" class="text-6xl sm:text-7xl font-semibold num-tabular tracking-tight text-[#1C1C1E] my-1">
+            01:30
+          </div>
+
+          <p id="restInstructionText" class="text-xs text-[#8E8E93] font-normal">พักฟื้นกล้ามเนื้อและดื่มน้ำ</p>
+
+          <div class="mt-4 flex gap-2.5">
+            <button onclick="adjustRestTimer(30)" class="px-4 py-2 rounded-xl bg-white border border-[#E5E5EA] text-xs font-medium text-[#1C1C1E] tap-scale shadow-[0_1px_2px_rgba(0,0,0,0.03)] active:bg-[#F2F2F7]">
+              +30s
+            </button>
+            <button onclick="skipRestTimer()" class="px-4 py-2 rounded-xl bg-white border border-[#E5E5EA] text-xs font-medium text-[#8E8E93] tap-scale shadow-[0_1px_2px_rgba(0,0,0,0.03)] active:bg-[#F2F2F7]">
+              Skip
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Controls -->
+      <div class="w-full pb-1">
+        <button id="btnSetComplete" onclick="handleSetComplete()" class="touch-target w-full py-3.5 rounded-xl bg-[#007AFF] active:bg-[#0062CC] text-white font-semibold text-base tracking-wide tap-scale transition shadow-sm flex items-center justify-center space-x-1.5">
+          <span>Set Complete</span>
+        </button>
+
+        <button id="btnNextAction" onclick="handleNextStep()" class="hidden touch-target w-full py-3.5 rounded-xl bg-[#007AFF] active:bg-[#0062CC] text-white font-semibold text-base tracking-wide tap-scale transition shadow-sm flex items-center justify-center space-x-1.5">
+          <span id="btnNextActionText">Next Set</span>
+          <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: WORKOUT COMPLETE SUMMARY VIEW          -->
+    <!-- ============================================== -->
+    <div id="view-complete" class="hidden flex flex-col flex-1 h-full justify-between items-center text-center py-4">
+      <div class="w-full my-auto flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full bg-white border border-[#E5E5EA] flex items-center justify-center text-2xl mb-3 shadow-sm text-[#34C759]">
+          ✓
+        </div>
+        <h2 class="text-2xl font-bold text-[#1C1C1E] tracking-tight">Workout Complete</h2>
+        <p class="text-[#8E8E93] text-xs mt-1">ยอดเยี่ยมมาก คุณทำครบทุกท่าและทุกเซ็ตแล้ว</p>
+
+        <div class="w-full grid grid-cols-2 gap-3 mt-6">
+          <div class="bg-white border border-[#E5E5EA] p-4 rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+            <span class="text-xs text-[#8E8E93] font-normal">จำนวนท่าฝึก</span>
+            <p id="summaryTotalExercises" class="text-3xl font-semibold text-[#1C1C1E] mt-1 num-tabular">6</p>
+            <span class="text-[11px] text-[#8E8E93]">Exercises</span>
+          </div>
+
+          <div class="bg-white border border-[#E5E5EA] p-4 rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+            <span class="text-xs text-[#8E8E93] font-normal">จำนวนเซ็ตที่ทำได้</span>
+            <p id="summaryTotalSets" class="text-3xl font-semibold text-[#007AFF] mt-1 num-tabular">18</p>
+            <span class="text-[11px] text-[#8E8E93]">Completed Sets</span>
+          </div>
+        </div>
+
+        <div class="w-full mt-3 bg-white border border-[#E5E5EA] px-4 py-3 rounded-xl text-left flex justify-between items-center shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+          <span class="text-xs text-[#8E8E93]">โปรแกรม:</span>
+          <span id="summaryRoutineName" class="text-xs font-semibold text-[#1C1C1E]">Upper A</span>
+        </div>
+      </div>
+
+      <button onclick="returnToHome()" class="touch-target w-full py-3.5 rounded-xl bg-white border border-[#E5E5EA] active:bg-[#F2F2F7] text-[#1C1C1E] font-medium text-base tap-scale transition shadow-sm">
+        Back to Home
+      </button>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: ROUTINE EXERCISE LIST PREVIEW           -->
+    <!-- ============================================== -->
+    <div id="previewModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex flex-col justify-end">
+      <div class="bg-white rounded-t-3xl max-h-[85vh] flex flex-col shadow-2xl p-5 safe-pb">
+        <div class="flex justify-between items-center pb-3 border-b border-[#E5E5EA]">
+          <div>
+            <h3 id="previewRoutineTitle" class="text-lg font-bold text-[#1C1C1E]">Upper A</h3>
+            <p id="previewRoutineSubtitle" class="text-xs text-[#8E8E93]">รายการท่าฝึกและสถิติล่าสุด</p>
+          </div>
+          <button onclick="closeRoutinePreview()" class="w-8 h-8 rounded-full bg-[#F2F2F7] flex items-center justify-center text-[#8E8E93] active:bg-[#E5E5EA]">
+            ✕
+          </button>
+        </div>
+
+        <div id="previewExerciseList" class="flex-1 overflow-y-auto divide-y divide-[#F2F2F7] py-2 no-scrollbar my-2">
+          <!-- Injected via JavaScript -->
+        </div>
+
+        <button id="previewStartBtn" onclick="" class="touch-target w-full py-3.5 rounded-xl bg-[#007AFF] active:bg-[#0062CC] text-white font-semibold text-base tap-scale transition shadow-sm mt-2">
+          เริ่มซ้อมโปรแกรมนี้
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: LOG PROGRESS (Weight & Reps)            -->
+    <!-- ============================================== -->
+    <div id="logProgressModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-5">
+      <div class="bg-white border border-[#E5E5EA] w-full max-w-sm rounded-t-3xl sm:rounded-2xl p-5 shadow-2xl safe-pb sm:pb-5">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[11px] font-semibold text-[#007AFF] uppercase tracking-wider">บันทึกสถิติท่านี้</span>
+            <h3 id="logExerciseTitle" class="text-lg font-bold text-[#1C1C1E] mt-0.5">DB Flat Bench Press</h3>
+          </div>
+          <button onclick="closeLogModal()" class="w-7 h-7 rounded-full bg-[#F2F2F7] text-[#8E8E93] flex items-center justify-center text-xs">✕</button>
+        </div>
+
+        <div id="logPreviousHint" class="mt-2 text-xs text-[#8E8E93] bg-[#F2F2F7] px-3 py-1.5 rounded-xl">
+          รอบก่อนหน้า: ยังไม่มีบันทึก
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-4">
+          <!-- Weight Input -->
+          <div class="bg-[#F2F2F7] p-3 rounded-xl flex flex-col">
+            <label class="text-[11px] text-[#8E8E93] font-medium mb-1">น้ำหนัก (kg)</label>
+            <input 
+              id="inputWeight" 
+              type="number" 
+              step="0.5" 
+              placeholder="0"
+              class="w-full bg-white border border-[#E5E5EA] rounded-lg py-2 px-3 text-lg font-semibold text-[#1C1C1E] focus:outline-none focus:border-[#007AFF] num-tabular"
+            />
+          </div>
+
+          <!-- Reps Input -->
+          <div class="bg-[#F2F2F7] p-3 rounded-xl flex flex-col">
+            <label class="text-[11px] text-[#8E8E93] font-medium mb-1">จำนวนครั้ง (Reps)</label>
+            <input 
+              id="inputReps" 
+              type="number" 
+              placeholder="0"
+              class="w-full bg-white border border-[#E5E5EA] rounded-lg py-2 px-3 text-lg font-semibold text-[#1C1C1E] focus:outline-none focus:border-[#007AFF] num-tabular"
+            />
+          </div>
+        </div>
+
+        <div class="mt-5 grid grid-cols-2 gap-2.5">
+          <button onclick="closeLogModal()" class="py-3 rounded-xl bg-[#F2F2F7] text-xs font-medium text-[#8E8E93] tap-scale active:bg-[#E5E5EA]">
+            ข้าม
+          </button>
+          <button onclick="confirmSaveLog()" class="py-3 rounded-xl bg-[#007AFF] text-xs font-semibold text-white tap-scale active:bg-[#0062CC] shadow-sm">
+            บันทึก
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exit Confirmation Dialog -->
+    <div id="exitModal" class="hidden fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px] flex items-center justify-center p-5">
+      <div class="bg-white border border-[#E5E5EA] w-full max-w-xs rounded-2xl p-5 text-center shadow-lg">
+        <h3 class="text-base font-semibold text-[#1C1C1E]">ออกจาก Workout?</h3>
+        <p class="text-xs text-[#8E8E93] mt-1">ความคืบหน้าของเซสชันนี้จะไม่ถูกบันทึก</p>
+        <div class="mt-5 grid grid-cols-2 gap-2.5">
+          <button onclick="closeExitModal()" class="py-2.5 rounded-xl bg-[#F2F2F7] text-xs font-medium text-[#1C1C1E] tap-scale active:bg-[#E5E5EA]">
+            ยกเลิก
+          </button>
+          <button onclick="confirmExitToHome()" class="py-2.5 rounded-xl bg-[#FF3B30] text-xs font-medium text-white tap-scale active:bg-[#D70015]">
+            ออก
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'workout_tracker_records';
+
+    const WORKOUT_DATABASE = {
+      upperA: {
+        name: "Upper A",
+        exercises: [
+          { name: "DB Flat Bench Press", scheme: "3 × 6–10", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Press.gif" },
+          { name: "Lat Pulldown", scheme: "3 × 8–12", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif" },
+          { name: "DB Shoulder Press", scheme: "3 × 8–12", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif" },
+          { name: "Dual Pulley Lateral Raise", scheme: "3 × 12–20", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/04/Cable-Lateral-Raise.gif" },
+          { name: "Tricep Pushdown", scheme: "2–3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Pushdown.gif" },
+          { name: "Bicep Curl Machine", scheme: "2–3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/04/Lever-Preacher-Curl.gif" }
+        ]
+      },
+      lowerA: {
+        name: "Lower A",
+        exercises: [
+          { name: "DB Bulgarian Split Squat", scheme: "3 × 8–12 / ข้าง", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Dumbbell-Bulgarian-Split-Squat.gif" },
+          { name: "DB Romanian Deadlift", scheme: "3 × 8–12", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Romanian-Deadlift.gif" },
+          { name: "Leg Curl", scheme: "3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Curl.gif" },
+          { name: "Leg Extension", scheme: "2 × 10–15", sets: 2, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif" },
+          { name: "Calf Raise", scheme: "3 × 12–20", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Calf-Raise.gif" }
+        ]
+      },
+      upperB: {
+        name: "Upper B",
+        exercises: [
+          { name: "Incline Chest Press", scheme: "3 × 8–12", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Press.gif" },
+          { name: "Seated Cable Row", scheme: "3 × 8–12", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif" },
+          { name: "Lat Pulldown", scheme: "2–3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif" },
+          { name: "Dual Pulley Lateral Raise", scheme: "3 × 12–20", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/04/Cable-Lateral-Raise.gif" },
+          { name: "DB Hammer Curl", scheme: "2–3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Hammer-Curl.gif" },
+          { name: "Overhead DB Triceps Extension", scheme: "2–3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Triceps-Extension.gif" }
+        ]
+      },
+      lowerB: {
+        name: "Lower B",
+        exercises: [
+          { name: "DB Bulgarian Split Squat / DB Reverse Lunge", scheme: "3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Dumbbell-Bulgarian-Split-Squat.gif" },
+          { name: "DB Romanian Deadlift", scheme: "3 × 8–12", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Romanian-Deadlift.gif" },
+          { name: "Leg Extension", scheme: "3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif" },
+          { name: "Leg Curl", scheme: "3 × 10–15", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Curl.gif" },
+          { name: "Hip Abductor", scheme: "2 × 15–20", sets: 2, image: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Lever-Seated-Hip-Abduction.gif" },
+          { name: "Calf Raise", scheme: "3 × 12–20", sets: 3, image: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Calf-Raise.gif" }
+        ]
+      }
+    };
+
+    // --- LocalStorage Helpers ---
+    function getAllRecords() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function getExerciseRecord(exerciseName) {
+      const records = getAllRecords();
+      return records[exerciseName] || null;
+    }
+
+    function saveExerciseRecord(exerciseName, weight, reps) {
+      const records = getAllRecords();
+      records[exerciseName] = {
+        weight: parseFloat(weight) || 0,
+        reps: parseInt(reps, 10) || 0,
+        updatedAt: new Date().toISOString()
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      } catch (e) {}
+    }
+
+    // State Variables
+    let currentRoutineKey = null;
+    let currentExerciseIndex = 0;
+    let currentSetIndex = 1;
+    let totalCompletedSets = 0;
+    let isResting = false;
+    let timerRemainingSeconds = 90;
+    let timerInterval = null;
+    let restEndTime = null;
+    let isProcessing = false;
+    let isSoundEnabled = true;
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+
+    function initAudioContext() {
+      try {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) audioCtx = new AudioContext();
+        }
+        if (navigator.audioSession) {
+          navigator.audioSession.type = 'ambient';
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } catch (err) {}
+    }
+
+    function playSoftChime() {
+      if (!isSoundEnabled) return;
+      try {
+        initAudioContext();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(659.25, now);
+        gain1.gain.setValueAtTime(0.06, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.35);
+
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(880.00, now + 0.12);
+        gain2.gain.setValueAtTime(0.06, now + 0.12);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + 0.12);
+        osc2.stop(now + 0.55);
+      } catch (err) {}
+    }
+
+    function toggleSound() {
+      isSoundEnabled = !isSoundEnabled;
+      const label = document.getElementById('soundToggleLabel');
+      const icon = document.getElementById('soundToggleIcon');
+      const btn = document.getElementById('soundToggleBtn');
+
+      if (isSoundEnabled) {
+        icon.textContent = '🔊';
+        label.textContent = 'Sound';
+        btn.classList.remove('opacity-60');
+        playSoftChime();
+      } else {
+        icon.textContent = '🔇';
+        label.textContent = 'Muted';
+        btn.classList.add('opacity-60');
+      }
+    }
+
+    function triggerHaptic() {
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(40);
+      }
+    }
+
+    function showView(viewId) {
+      ['view-home', 'view-workout', 'view-complete'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(viewId).classList.remove('hidden');
+    }
+
+    // Modal Routine Overview Preview
+    function openRoutinePreview(routineKey) {
+      const routine = WORKOUT_DATABASE[routineKey];
+      document.getElementById('previewRoutineTitle').textContent = routine.name;
+      document.getElementById('previewRoutineSubtitle').textContent = `${routine.exercises.length} ท่าฝึกทั้งหมด`;
+
+      const listContainer = document.getElementById('previewExerciseList');
+      listContainer.innerHTML = '';
+
+      routine.exercises.forEach((ex, idx) => {
+        const record = getExerciseRecord(ex.name);
+        const recordText = record 
+          ? `<span class="text-[#007AFF] font-medium">ครั้งก่อน: ${record.weight} kg × ${record.reps} reps</span>` 
+          : `<span class="text-[#8E8E93]">${ex.sets} เซ็ต · ${ex.scheme}</span>`;
+
+        const item = document.createElement('div');
+        item.className = 'py-2.5 flex items-center justify-between';
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-[#F2F2F7] text-xs font-semibold text-[#8E8E93] flex items-center justify-center num-tabular">${idx + 1}</span>
+            <div>
+              <p class="text-sm font-semibold text-[#1C1C1E] leading-tight">${ex.name}</p>
+              <p class="text-xs mt-0.5">${recordText}</p>
+            </div>
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
+
+      const startBtn = document.getElementById('previewStartBtn');
+      startBtn.onclick = () => {
+        closeRoutinePreview();
+        startWorkout(routineKey);
+      };
+
+      document.getElementById('previewModal').classList.remove('hidden');
+    }
+
+    function closeRoutinePreview() {
+      document.getElementById('previewModal').classList.add('hidden');
+    }
+
+    function startWorkout(routineKey) {
+      currentRoutineKey = routineKey;
+      currentExerciseIndex = 0;
+      currentSetIndex = 1;
+      totalCompletedSets = 0;
+      isResting = false;
+      stopTimer();
+
+      const routine = WORKOUT_DATABASE[routineKey];
+      document.getElementById('workoutRoutineBadge').textContent = routine.name;
+
+      renderExerciseView();
+      showView('view-workout');
+    }
+
+    function renderExerciseView() {
+      const routine = WORKOUT_DATABASE[currentRoutineKey];
+      const exercise = routine.exercises[currentExerciseIndex];
+      const totalExercises = routine.exercises.length;
+
+      document.getElementById('exerciseCounterBadge').textContent = `${currentExerciseIndex + 1} of ${totalExercises}`;
+      const progressPercent = ((currentExerciseIndex) / totalExercises) * 100;
+      document.getElementById('workoutProgressBar').style.width = `${Math.max(10, progressPercent)}%`;
+
+      document.getElementById('exerciseNameLabel').textContent = exercise.name;
+      document.getElementById('exerciseSchemeLabel').textContent = exercise.scheme;
+
+      // Check Previous Record and Display
+      const prevRecord = getExerciseRecord(exercise.name);
+      const badge = document.getElementById('lastRecordBadge');
+      if (prevRecord && (prevRecord.weight > 0 || prevRecord.reps > 0)) {
+        badge.textContent = `ครั้งก่อน: ${prevRecord.weight} kg × ${prevRecord.reps} reps`;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+
+      const imgElem = document.getElementById('exerciseImg');
+      const placeholder = document.getElementById('imgPlaceholder');
+      if (placeholder) {
+        placeholder.style.display = 'flex';
+        placeholder.innerHTML = `
+          <svg class="w-6 h-6 opacity-40 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <span class="text-[11px] text-[#8E8E93] font-medium">กำลังโหลด...</span>
+        `;
+      }
+      imgElem.style.opacity = '0';
+      imgElem.src = exercise.image;
+
+      document.getElementById('currentSetNum').textContent = currentSetIndex;
+      document.getElementById('totalSetNum').textContent = exercise.sets;
+
+      const dotsRow = document.getElementById('setDotsRow');
+      dotsRow.innerHTML = '';
+      for (let i = 1; i <= exercise.sets; i++) {
+        const dot = document.createElement('div');
+        dot.className = `h-1.5 rounded-full transition-all ${
+          i <= currentSetIndex ? 'w-5 bg-[#007AFF]' : 'w-1.5 bg-[#D1D1D6]'
+        }`;
+        dotsRow.appendChild(dot);
+      }
+
+      showActiveSetMode();
+    }
+
+    function showActiveSetMode() {
+      isResting = false;
+      document.getElementById('statusSetActive').classList.remove('hidden');
+      document.getElementById('statusTimerActive').classList.add('hidden');
+      document.getElementById('btnSetComplete').classList.remove('hidden');
+      document.getElementById('btnNextAction').classList.add('hidden');
+    }
+
+    function showRestTimerMode(isLastSetOfExercise) {
+      isResting = true;
+      document.getElementById('statusSetActive').classList.add('hidden');
+      document.getElementById('statusTimerActive').classList.remove('hidden');
+      document.getElementById('btnSetComplete').classList.add('hidden');
+      document.getElementById('btnNextAction').classList.remove('hidden');
+
+      const btnNextText = document.getElementById('btnNextActionText');
+      const routine = WORKOUT_DATABASE[currentRoutineKey];
+      const isLastExerciseOverall = (currentExerciseIndex >= routine.exercises.length - 1);
+
+      if (isLastSetOfExercise) {
+        btnNextText.textContent = isLastExerciseOverall ? "Finish Workout" : "Next Exercise";
+      } else {
+        btnNextText.textContent = "Next Set";
+      }
+
+      startRestCountdown(90);
+    }
+
+    // Progress Modal Functions
+    function openLogModal(exerciseName) {
+      document.getElementById('logExerciseTitle').textContent = exerciseName;
+      const prevRecord = getExerciseRecord(exerciseName);
+      const hint = document.getElementById('logPreviousHint');
+      const inputWeight = document.getElementById('inputWeight');
+      const inputReps = document.getElementById('inputReps');
+
+      if (prevRecord && (prevRecord.weight > 0 || prevRecord.reps > 0)) {
+        hint.textContent = `รอบก่อน: ${prevRecord.weight} kg × ${prevRecord.reps} reps`;
+        inputWeight.value = prevRecord.weight;
+        inputReps.value = prevRecord.reps;
+      } else {
+        hint.textContent = 'รอบก่อนหน้า: ยังไม่มีบันทึก';
+        inputWeight.value = '';
+        inputReps.value = '';
+      }
+
+      document.getElementById('logProgressModal').classList.remove('hidden');
+      setTimeout(() => inputWeight.focus(), 150);
+    }
+
+    function closeLogModal() {
+      document.getElementById('logProgressModal').classList.add('hidden');
+      showRestTimerMode(true);
+    }
+
+    function confirmSaveLog() {
+      const routine = WORKOUT_DATABASE[currentRoutineKey];
+      const exercise = routine.exercises[currentExerciseIndex];
+      const weight = document.getElementById('inputWeight').value;
+      const reps = document.getElementById('inputReps').value;
+
+      if (weight || reps) {
+        saveExerciseRecord(exercise.name, weight, reps);
+      }
+
+      document.getElementById('logProgressModal').classList.add('hidden');
+      showRestTimerMode(true);
+    }
+
+    function handleSetComplete() {
+      if (isProcessing || isResting) return;
+      isProcessing = true;
+
+      initAudioContext();
+      triggerHaptic();
+      totalCompletedSets++;
+
+      const routine = WORKOUT_DATABASE[currentRoutineKey];
+      const exercise = routine.exercises[currentExerciseIndex];
+      const isLastSet = currentSetIndex >= exercise.sets;
+
+      if (isLastSet) {
+        openLogModal(exercise.name);
+      } else {
+        showRestTimerMode(false);
+      }
+
+      setTimeout(() => { isProcessing = false; }, 300);
+    }
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function startRestCountdown(seconds) {
+      stopTimer();
+      restEndTime = Date.now() + (seconds * 1000);
+      timerRemainingSeconds = Math.max(0, seconds);
+      updateTimerDisplay(false);
+
+      timerInterval = setInterval(() => {
+        syncTimer();
+      }, 500);
+    }
+
+    function syncTimer() {
+      if (!restEndTime) return;
+      const now = Date.now();
+      const diffSeconds = Math.ceil((restEndTime - now) / 1000);
+
+      if (diffSeconds <= 0) {
+        timerRemainingSeconds = 0;
+        updateTimerDisplay(true);
+        stopTimer();
+        onRestComplete();
+      } else {
+        timerRemainingSeconds = diffSeconds;
+        updateTimerDisplay(false);
+      }
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      restEndTime = null;
+    }
+
+    function updateTimerDisplay(isComplete) {
+      const timerDisplay = document.getElementById('restTimerDisplay');
+      const badge = document.getElementById('restStatusBadge');
+      const instruction = document.getElementById('restInstructionText');
+
+      timerDisplay.textContent = formatTime(timerRemainingSeconds);
+
+      if (isComplete) {
+        badge.textContent = 'Rest Complete';
+        badge.className = 'text-xs font-semibold text-[#34C759] uppercase tracking-wider mb-1';
+        instruction.textContent = 'เวลาพักครบแล้ว พร้อมสำหรับก้าวถัดไป';
+        timerDisplay.classList.add('text-[#34C759]');
+        timerDisplay.classList.remove('text-[#1C1C1E]');
+      } else {
+        badge.textContent = 'Rest';
+        badge.className = 'text-xs font-semibold text-[#8E8E93] uppercase tracking-wider mb-1';
+        instruction.textContent = 'พักฟื้นกล้ามเนื้อและดื่มน้ำ';
+        timerDisplay.classList.add('text-[#1C1C1E]');
+        timerDisplay.classList.remove('text-[#34C759]');
+      }
+    }
+
+    function onRestComplete() {
+      playSoftChime();
+      triggerHaptic();
+    }
+
+    function adjustRestTimer(delta) {
+      if (restEndTime) {
+        restEndTime += delta * 1000;
+      }
+      timerRemainingSeconds = Math.max(0, timerRemainingSeconds + delta);
+      updateTimerDisplay(timerRemainingSeconds === 0);
+    }
+
+    function skipRestTimer() {
+      stopTimer();
+      timerRemainingSeconds = 0;
+      updateTimerDisplay(true);
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && isResting && restEndTime) {
+        syncTimer();
+      }
+    });
+
+    function handleNextStep() {
+      if (isProcessing) return;
+      isProcessing = true;
+      stopTimer();
+
+      const routine = WORKOUT_DATABASE[currentRoutineKey];
+      const exercise = routine.exercises[currentExerciseIndex];
+
+      if (currentSetIndex < exercise.sets) {
+        currentSetIndex++;
+        showActiveSetMode();
+        document.getElementById('currentSetNum').textContent = currentSetIndex;
+        
+        const dots = document.getElementById('setDotsRow').children;
+        for (let i = 0; i < dots.length; i++) {
+          dots[i].className = (i < currentSetIndex) 
+            ? 'h-1.5 w-5 bg-[#007AFF] rounded-full transition-all' 
+            : 'h-1.5 w-1.5 bg-[#D1D1D6] rounded-full transition-all';
+        }
+      } else {
+        if (currentExerciseIndex < routine.exercises.length - 1) {
+          currentExerciseIndex++;
+          currentSetIndex = 1;
+          renderExerciseView();
+        } else {
+          showWorkoutComplete();
+        }
+      }
+      setTimeout(() => { isProcessing = false; }, 300);
+    }
+
+    function showWorkoutComplete() {
+      stopTimer();
+      playSoftChime();
+
+      const routine = WORKOUT_DATABASE[currentRoutineKey];
+      document.getElementById('summaryTotalExercises').textContent = routine.exercises.length;
+      document.getElementById('summaryTotalSets').textContent = totalCompletedSets;
+      document.getElementById('summaryRoutineName').textContent = routine.name;
+
+      document.getElementById('workoutProgressBar').style.width = '100%';
+      showView('view-complete');
+    }
+
+    function returnToHome() {
+      stopTimer();
+      showView('view-home');
+    }
+
+    function promptExitWorkout() {
+      document.getElementById('exitModal').classList.remove('hidden');
+    }
+
+    function closeExitModal() {
+      document.getElementById('exitModal').classList.add('hidden');
+    }
+
+    function confirmExitToHome() {
+      closeExitModal();
+      stopTimer();
+      showView('view-home');
+    }
+  </script>
+</body>
+</html>
